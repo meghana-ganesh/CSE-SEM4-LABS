@@ -1,0 +1,14 @@
+create table employee(empno number(3),emp_name varchar(10) not null,gender char(1) not null,salary numeric(8,2) not null,address varchar(30) not null,dno number(1),constraint empno_pk primary key(empno),constraint gender_chk check(gender is not null and gender in('M','F'));
+create table Department(DeptNo int primary key,DeptName varchar(50) unique);
+ alter table employee add constraint dno_fk foreign key(dno) references Department(DeptNo);
+ insert into Department values(1,'HR');
+insert into Department values(2,'IT');
+insert into employee values(1,'John Doe','M',50000,'123 Main St',1);
+insert into employee values(2,'Jane Doe','F',55000,'456 Oak Ave',2);
+insert into employee values(2,'Jane Doe','G',55000,'456 Oak Ave',2); check constraint (DBL28.CHECK_GENDER) violated
+insert into Department values(3,'IT'); unique constraint (DBL28.SYS_C00181635) violated
+delete from department where DeptNo=1; integrity constraint (DBL28.DNO_FK) violated - child record found
+delete from employee where dno = 1;
+delete from department where DeptNo=1;
+ alter table employee drop constraint dno_fk;
+ alter table employee add constraint dno_fk foreign key(dno) references Department(DeptNo) on delete cascade;

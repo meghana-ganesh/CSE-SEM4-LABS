@@ -1,0 +1,336 @@
+SELECT student.name,student.dept_name from student,department where student.dept_name = department.dept_name;
+select * from instructor where dept_name='Comp. Sci.';
+select * from course where credits=3;
+select course.course_id,course.title from course join takes on course.course_id = takes.course_id where takes.id=12
+345;
+ select * from instructor where salary between 40000 and 90000;
+ select instructor.id from instructor where instructor.id not in(select teaches.id from teaches);
+
+
+
+
+SQL> @ C:\Users\Student\Downloads\DBS\University.sql
+SQL> @ C:\Users\Student\Downloads\DBS\smallRelations.sql
+SQL> select name,dept_name from student;
+
+NAME                 DEPT_NAME
+-------------------- --------------------
+Zhang                Comp. Sci.
+Shankar              Comp. Sci.
+Brandt               History
+Chavez               Finance
+Peltier              Physics
+Levy                 Physics
+Williams             Comp. Sci.
+Sanchez              Music
+Snow                 Physics
+Brown                Comp. Sci.
+Aoi                  Elec. Eng.
+
+NAME                 DEPT_NAME
+-------------------- --------------------
+Bourikas             Elec. Eng.
+Tanaka               Biology
+
+13 rows selected.
+
+SQL> select * from instructor where dept_name='Comp. Sci.';
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+10101 Srinivasan           Comp. Sci.                65000
+45565 Katz                 Comp. Sci.                75000
+83821 Brandt               Comp. Sci.                92000
+
+SQL> select title from course where dept_name='Comp. Sci.' and credits=3;
+
+TITLE
+--------------------------------------------------
+Robotics
+Image Processing
+Database System Concepts
+
+SQL> select Student.ID, takes.course_id, course.title from student, takes, course where student.id=12345 and student.id=takes.id and takes.course_id=course.course_id;
+
+ID    COURSE_I TITLE
+----- -------- --------------------------------------------------
+12345 CS-101   Intro. to Computer Science
+12345 CS-190   Game Design
+12345 CS-315   Robotics
+12345 CS-347   Database System Concepts
+
+SQL> select name from instructor where salary between 40000 and 90000;
+
+NAME
+--------------------
+Srinivasan
+Wu
+Mozart
+El Said
+Gold
+Katz
+Califieri
+Singh
+Crick
+Kim
+
+SQL> (select ID from instructor) except (select ID from teaches);
+
+ID
+-----
+76543
+58583
+33456
+
+SQL> select name, title, takes.year from student, section, course, takes where student.id=takes.id and takes.course_id=course.course_id and takes.course_id=section.course_id and section.room_number=303;
+
+no rows selected
+
+SQL> select name, course_id c_name from student natural join takes where takes.year=2015;
+no rows selected
+
+SQL> select name, salary inst_salary from instructor where salary> some(select salary from instructor where dept_name='Comp. Sci.');
+
+NAME                 INST_SALARY
+-------------------- -----------
+Einstein                   95000
+Brandt                     92000
+Wu                         90000
+Gold                       87000
+Kim                        80000
+Singh                      80000
+Katz                       75000
+Crick                      72000
+
+8 rows selected.
+
+
+SQL> select name from instructor where dept_name like '%ch%';
+
+no rows selected
+
+SQL> select name, length(name) from student;
+
+NAME                 LENGTH(NAME)
+-------------------- ------------
+Zhang                           5
+Shankar                         7
+Brandt                          6
+Chavez                          6
+Peltier                         7
+Levy                            4
+Williams                        8
+Sanchez                         7
+Snow                            4
+Brown                           5
+Aoi                             3
+
+NAME                 LENGTH(NAME)
+-------------------- ------------
+Bourikas                        8
+Tanaka                          6
+
+13 rows selected.
+
+SQL> select dept_name, substr(dept_name, 3,1) from department;
+
+DEPT_NAME            S
+-------------------- -
+Biology              o
+Comp. Sci.           m
+Elec. Eng.           e
+Finance              n
+History              s
+Music                s
+Physics              y
+
+7 rows selected.
+
+SQL> select upper(name) from instructor;
+
+UPPER(NAME)
+--------------------
+SRINIVASAN
+WU
+MOZART
+EINSTEIN
+EL SAID
+GOLD
+KATZ
+CALIFIERI
+SINGH
+CRICK
+BRANDT
+
+UPPER(NAME)
+--------------------
+KIM
+
+12 rows selected.
+
+SQL> select nvl(grade,1) from takes;
+
+NV
+--
+A
+A-
+C
+A
+A
+A
+B
+C+
+B-
+F
+B+
+
+NV
+--
+B
+A-
+B+
+A-
+A
+A
+C
+C-
+B
+A
+1
+
+22 rows selected.
+
+SQL> select salary, round(salary/3,-2) third from instructor;
+
+    SALARY      THIRD
+---------- ----------
+     65000      21700
+     90000      30000
+     40000      13300
+     95000      31700
+     60000      20000
+     87000      29000
+     75000      25000
+     62000      20700
+     80000      26700
+     72000      24000
+     92000      30700
+
+    SALARY      THIRD
+---------- ----------
+     80000      26700
+
+12 rows selected.
+
+SQL> alter table emp add(dob date);
+SQL> update emp set dob=to_date('06-SEPTEMBER-2002','DD-MON-YYYY') where empname='Meg';
+SQL> update emp set dob=to_date('12-NOVEMBER-05','DD-MON-YY') where empname='Jia';
+SQL> update emp set dob=to_date('06-03-12','DD-MM-YY') where empname='Neo';
+SQL> select empname, to_char(dob,'YEAR') year from emp;
+
+EMPNAME    YEAR
+---------- ------------------------------------------
+Meg     TWO THOUSAND TWO
+Jia        TWO THOUSAND FIVE
+Neo        TWENTY TWELVE
+
+SQL> select empname, to_char(dob,'Year') year from emp;
+
+EMPNAME    YEAR
+---------- ------------------------------------------
+Meg     Two Thousand Two
+Jia        Two Thousand Five
+Neo        Twenty Twelve
+
+SQL> select empname, to_char(dob,'year') year from emp;
+
+EMPNAME    YEAR
+---------- ------------------------------------------
+Meg     two thousand two
+Jia        two thousand five
+Neo        twenty twelve
+
+SQL> select empname, to_char(dob,'DAY') year from emp;
+
+EMPNAME    YEAR
+---------- ------------------------------------
+Meg     FRIDAY
+Jia        SATURDAY
+Neo        TUESDAY
+
+SQL> select empname, to_char(dob,'Day') year from emp;
+
+EMPNAME    YEAR
+---------- ------------------------------------
+Meg     Friday
+Jia        Saturday
+Neo        Tuesday
+
+SQL> select empname, to_char(dob,'MONTH') year from emp;
+
+EMPNAME    YEAR
+---------- ------------------------------------
+Meg     SEPTEMBER
+Jia        NOVEMBER
+Neo        MARCH
+
+SQL> select empname, to_char(dob,'Month') year from emp;
+
+EMPNAME    YEAR
+---------- ------------------------------------
+Meg     September
+Jia        November
+Neo        March
+
+SQL> select last_day(dob) Lastday,to_char(last_day(dob),'Day') Day from emp where empname='Neo';
+
+LASTDAY   DAY
+--------- ------------------------------------
+31-MAR-12 Saturday
+
+SQL> select empname, round(months_between(current_date,dob)/12,0) age from emp;
+
+EMPNAME           AGE
+---------- ----------
+Meg             20
+Jia                17
+Neo                11
+
+SQL> select empname, dob, next_day(add_months(dob,60*12),'Saturday')  next_sat from emp;
+
+EMPNAME    DOB       NEXT_SAT
+---------- --------- ---------
+Meg     06-SEP-02 09-SEP-62
+Jia        12-NOV-05 14-NOV-65
+Neo        06-MAR-12 12-MAR-72
+
+SQL> select empname from emp where extract(year from dob)=&x;
+Enter value for x: 2002
+old   1: select empname from emp where extract(year from dob)=&x
+new   1: select empname from emp where extract(year from dob)=2002
+
+EMPNAME
+----------
+Meg
+
+
+SQL> select empname from emp where extract(year from dob) between &x and &y;
+Enter value for x: 1993
+Enter value for y: 2005
+old   1: select empname from emp where extract(year from dob) between &x and &y
+new   1: select empname from emp where extract(year from dob) between 1993 and 2005
+
+EMPNAME
+----------
+Meg
+Jia
+
+
+SQL> select empname from emp where &x-extract(year from dob)=63;
+Enter value for x: 2065
+old   1: select empname from emp where &x-extract(year from dob)=63
+new   1: select empname from emp where 2065-extract(year from dob)=63
+
+EMPNAME
+----------
+Meg
