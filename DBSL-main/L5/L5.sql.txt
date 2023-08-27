@@ -1,0 +1,268 @@
+Q1.
+
+ select bdate,address from employee where fname = 'John' and Minit = 'B' and lname= 'Smith';
+
+BDATE     ADDRESS
+--------- ------------------------------
+09-JAN-65 731 Fondren, Houston, TX
+
+
+ select e.fname,e.minit,e.lname from employee e,department1 d where e.ssn = d.mgr_ssn and d.dname = 'Research';
+
+FNAME           M LNAME
+--------------- - ---------------
+Franklin        T Wong
+
+
+Q2.
+
+select p.pnumber,p.plocation,d.dnumber,e.lname,e.address,e.bdate from project p,employee e,department1 d where p.dnum = d.dnumber and d.mgr_ssn = e.ssn and p.plocation = 'Stafford';
+
+   PNUMBER PLOCATION          DNUMBER LNAME
+---------- --------------- ---------- ---------------
+ADDRESS                        BDATE
+------------------------------ ---------
+        10 Stafford                 4 Wallace
+291 Berry, Bellaire, TX        20-JUN-41
+
+Q3.
+
+select distinct(salary) from employee;
+
+    SALARY
+----------
+     38000
+     43000
+     55000
+     30000
+     40000
+     25000
+     37000
+
+Q4.
+
+ select e.fname,e.lname,s.fname as superf,s.lname as superl from employee e,employee s where e.super_ssn = s.ssn;
+
+FNAME           LNAME           SUPERF          SUPERL
+--------------- --------------- --------------- ---------------
+Richard         Marini          Richard         Marini
+Joyce           English         Franklin        Wong
+Ramesh          Narayan         Franklin        Wong
+John            Smith           Franklin        Wong
+Ahmad           Jabbar          Jennifer        Wallace
+Alicia          Zelaya          Jennifer        Wallace
+Jennifer        Wallace         James           Borg
+Franklin        Wong            James           Borg
+
+
+
+
+
+--Q5-------------------------------------
+SELECT essn,pno,fname,lname
+  FROM works_on w,employee e
+  WHERE w.essn = e.ssn AND lname = 'Smith';
+
+
+ESSN             PNO FNAME           LNAME
+--------- ---------- --------------- ---------------
+123456789          1 John            Smith
+123456789          2 John            Smith
+-----------------------------------------
+
+--Q6-------------------------------------
+SELECT fname,lname,address
+  FROM employee
+  WHERE address LIKE '%Houston%';
+
+FNAME           LNAME           ADDRESS
+--------------- --------------- ------------------------------
+John            Smith           731 Fondren, Houston, TX
+Franklin        Wong            638 Voss, Houston, TX
+Joyce           English         5631 Rice, Houston, TX
+Ahmad           Jabbar          980 Dallas, Houston, TX
+James           Borg            450 Stone, Houston, TX
+-----------------------------------------
+
+--Q7-------------------------------------
+SELECT fname,salary*1.1 Salary
+  FROM project,employee
+  WHERE pname = 'ProductX' AND dno = dnum;
+
+FNAME               SALARY
+--------------- ----------
+John                 33000
+Franklin             44000
+Ramesh               41800
+Joyce                27500
+-----------------------------------------
+
+--Q8-------------------------------------
+SELECT fname,lname,salary
+  FROM employee
+  WHERE salary BETWEEN 30000 AND 40000 and dno = 5;
+
+FNAME           LNAME               SALARY
+--------------- --------------- ----------
+John            Smith                30000
+Franklin        Wong                 40000
+Ramesh          Narayan              38000
+-----------------------------------------
+
+--Q9-------------------------------------
+SELECT pno,dno,fname,lname
+  FROM works_on,employee
+  WHERE essn = ssn ORDER BY dno,fname,lname;
+
+       PNO        DNO FNAME           LNAME
+---------- ---------- --------------- ---------------
+        10          4 Ahmad           Jabbar
+        30          4 Ahmad           Jabbar
+        30          4 Alicia          Zelaya
+        10          4 Alicia          Zelaya
+        20          4 James           Borg
+        30          4 Jennifer        Wallace
+        20          4 Jennifer        Wallace
+        10          5 Franklin        Wong
+         3          5 Franklin        Wong
+         2          5 Franklin        Wong
+        20          5 Franklin        Wong
+
+       PNO        DNO FNAME           LNAME
+---------- ---------- --------------- ---------------
+         1          5 John            Smith
+         2          5 John            Smith
+         2          5 Joyce           English
+         1          5 Joyce           English
+         3          5 Ramesh          Narayan
+-----------------------------------------
+
+--Q10------------------------------------
+SELECT ssn,fname,lname
+  FROM employee
+  WHERE super_ssn IS NULL;
+
+SSN       FNAME           LNAME
+--------- --------------- ---------------
+888665555 James           Borg
+-----------------------------------------
+
+--Q11------------------------------------
+SELECT fname,minit,lname
+ FROM employee e,dependent d
+ WHERE e.fname=d.dependent_name and e.sex=d.sex;
+
+no rows selected
+-----------------------------------------
+
+--Q12------------------------------------
+SELECT fname,lname,ssn
+FROM employee
+WHERE ssn NOT IN (
+SELECT essn
+FROM dependent);
+
+FNAME           LNAME           SSN
+--------------- --------------- ---------
+Joyce           English         453453453
+Richard         Marini          653298653
+Ramesh          Narayan         666884444
+James           Borg            888665555
+Ahmad           Jabbar          987987987
+Alicia          Zelaya          999887777
+-----------------------------------------
+
+--Q13------------------------------------
+SELECT distinct fname
+FROM employee,department1,dependent
+WHERE ssn = mgr_ssn AND ssn = essn;
+
+FNAME
+---------------
+Franklin
+Jennifer
+-----------------------------------------
+
+--Q14------------------------------------
+SELECT pnumber,ssn
+  FROM project,employee
+  WHERE pnumber IN(1,2,3) AND dnum = dno ORDER BY pnumber;
+
+  PNUMBER SSN
+---------- ---------
+         1 333445555
+         1 666884444
+         1 453453453
+         1 123456789
+         2 333445555
+         2 666884444
+         2 453453453
+         2 123456789
+         3 453453453
+         3 666884444
+         3 333445555
+
+   PNUMBER SSN
+---------- ---------
+         3 123456789
+-----------------------------------------
+
+
+
+--Q15------------------------------------
+SELECT sum(salary) SUM,max(salary) MAX,min(salary) MIN,avg(salary) AVG
+  FROM employee;
+
+      SUM        MAX        MIN        AVG
+---------- ---------- ---------- ----------
+    318000      55000      25000 35333.3333
+-----------------------------------------
+
+--Q16------------------------------------
+SELECT sum(salary) SUM,max(salary) MAX,min(salary) MIN,avg(salary) AVG
+  FROM department1,employee
+  WHERE dname = 'Research' AND dnumber = dno;
+
+       SUM        MAX        MIN        AVG
+---------- ---------- ---------- ----------
+    133000      40000      25000      33250
+-----------------------------------------
+
+--Q17------------------------------------
+ WITH w(Pno,Count) AS (SELECT Pno, COUNT(*) FROM works_on GROUP BY Pno)
+  SELECT w.Pno, Pname, w.Count FROM w, Project WHERE w.Pno = Pnumber;
+
+PNAME                  PNO      COUNT
+--------------- ---------- ----------
+ProductX                 1          2
+Newbenefits             30          3
+ProductY                 2          3
+Reorganization          20          3
+ProductZ                 3          2
+Computerization         10          3
+-----------------------------------------
+
+--Q18-----------------------------------
+SELECT pname,pno,count
+  FROM project,nums
+  WHERE pno = pnumber AND count > 2;
+
+PNAME                  PNO      COUNT
+--------------- ---------- ----------
+Newbenefits             30          3
+ProductY                 2          3
+Reorganization          20          3
+Computerization         10          3
+----------------------------------------
+
+--Q19-----------------------------------
+
+WITH e(dno,count) AS (SELECT Dno, COUNT(*) FROM Employee WHERE salary > 40000 GROUP BY Dno)
+SELECT e.dno, e.count FROM e WHERE e.dno IN (SELECT Dno FROM Employee GROUP BY Dno HAVING COUNT(*) > 2);
+
+
+       DNO COUNT(SSN)
+---------- ----------
+         4          2
+----------------------------------------    
+

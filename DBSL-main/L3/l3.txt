@@ -1,0 +1,171 @@
+Q1.
+select course_id from section where semester='Fall' and year=2009 union(select course_id from section where semester='Spring' and year=2010);
+
+COURSE_I
+--------
+CS-101
+CS-315
+CS-319
+CS-347
+FIN-201
+HIS-351
+MU-199
+PHY-101
+
+
+
+Q2.
+ select course_id from section where semester='Fall' and year=2009 intersect(select course_id from section where semester='Spring' and year=2010);
+
+COURSE_I
+--------
+CS-101
+
+
+
+Q3.
+select course_id from section where semester='Fall' and year=2009 minus(select course_id from section where semester='Spring' and year=2010);
+
+COURSE_I
+--------
+CS-347
+PHY-101
+
+
+
+Q4.
+ select title from course where course_id not in(select course_id from takes);
+
+TITLE
+--------------------------------------------------
+Computational Biology
+
+
+
+Q5.
+select distinct course_id from section where semester='Fall' and year=2009 and course_id in(select course_id from section where semester='Spring' and year=2010);
+
+COURSE_I
+--------
+CS-101
+
+
+
+Q6.
+select count(distinct ID) from takes where(course_id,sec_id,semester,year) in(select course_id,sec_id,semester,year from teaches where teaches.ID=10101);
+
+COUNT(DISTINCTID)
+-----------------
+                6
+
+
+Q7.
+ select distinct course_id from section where semester='Fall' and year=2009 and course_id not in(select course_id from section where semester='Spring' and year=2010);
+
+COURSE_I
+--------
+CS-347
+PHY-101
+
+
+
+Q8.
+select student.name from student,instructor where student.name = instructor.name;
+
+NAME
+--------------------
+Brandt
+
+
+
+Q9.
+select name from instructor where salary>some(select salary from instructor where dept_name='Biology');
+
+NAME
+--------------------
+Einstein
+Brandt
+Wu
+Gold
+Kim
+Singh
+Katz
+
+
+
+Q10.
+select name from instructor where salary>all(select salary from instructor where dept_name='Biology');
+
+NAME
+--------------------
+Katz
+Singh
+Kim
+Gold
+Wu
+Brandt
+Einstein
+
+
+
+Q11.
+ select avg(salary) from instructor group by dept_name having avg(salary)>=all(select avg(salary) from instructor group by dept_name);
+
+AVG(SALARY)
+-----------
+      91000
+
+
+
+Q12.
+ select dept_name from department where budget<=all(select avg(salary) from instructor);
+
+DEPT_NAME
+--------------------
+History
+Physics
+
+
+
+Q13.
+select course_id from section s where semester='Fall' and year=2009 and exists(select course_id from section t where semester='Spring' and year=2010 and s.course_id = t.course_id);
+
+COURSE_I
+--------
+CS-101
+
+
+
+Q14.
+select s.id,s.name from student1 s where not exists((select course_id from course1 where dept_name='Biology' minus(select t.course_id from takes t where s.id=t.id)));
+
+no rows selected
+
+(NOTE:You could also use EXISTS to solve this problem, but it would require a slightly different approach. Using NOT EXISTS allows you to find all students who have taken all courses offered in the Biology department without having to explicitly count how many courses are offered in that department.
+
+To use EXISTS, you would need to count the number of courses offered in the Biology department and compare it to the number of courses the student has taken in that department. This would require a subquery that counts the number of courses in the Biology department, and then a main query that selects students who have taken at least that many courses in the Biology department.
+
+The NOT EXISTS approach is simpler because it allows you to directly check whether there is any course in the Biology department that the student has not taken, and then selects only those students for whom no such course exists.)
+
+
+
+Q15.
+select c.course_id from course c where 1>=(select count(s.course_id) from section s where c.course_id=s.course_id and year=2009);
+
+COURSE_I
+--------
+BIO-101
+BIO-301
+BIO-399
+CS-101
+CS-315
+CS-319
+CS-347
+EE-181
+FIN-201
+HIS-351
+MU-199
+
+COURSE_I
+--------
+PHY-101
